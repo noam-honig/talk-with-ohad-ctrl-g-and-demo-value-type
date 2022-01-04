@@ -1,14 +1,15 @@
 import { Injectable } from '@angular/core';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { Remult } from 'remult';
-import { AuthServerService } from './auth.server.service';
+import { User } from './users/user';
+
 
 @Injectable({
     providedIn: 'root'
 })
 export class AuthService {
     async signIn(username: string, password: string) {
-        this.setAuthToken(await AuthServerService.signIn(username, password));
+        this.setAuthToken(await User.signIn(username, password));
     }
 
     setAuthToken(token: string) {

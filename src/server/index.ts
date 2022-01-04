@@ -1,5 +1,3 @@
-//import { CustomModuleLoader } from '../../../../../../repos/radweb/src/app/server/CustomModuleLoader';
-//let moduleLoader = new CustomModuleLoader('/dist-server/repos/radweb/projects/');
 import * as express from 'express';
 import { remultExpress } from 'remult/remult-express';
 import { config } from 'dotenv';
@@ -9,7 +7,8 @@ import * as swaggerUi from 'swagger-ui-express';
 import * as helmet from 'helmet';
 import * as jwt from 'express-jwt';
 import * as compression from 'compression';
-import { getJwtTokenSignKey } from '../app/auth.server.service';
+import { getJwtTokenSignKey } from '../app/users/user';
+
 
 async function startup() {
     config(); //loads the configuration from the .env file
@@ -36,10 +35,10 @@ async function startup() {
 
 
 
-    app.use(express.static('dist/my-project'));
+    app.use(express.static('dist/angular-starter-project'));
     app.use('/*', async (req, res) => {
         try {
-            res.sendFile('./dist/angular-starter-project/index.html');
+            res.sendFile(process.cwd() + '/dist/angular-starter-project/index.html');
         } catch (err) {
             res.sendStatus(500);
         }

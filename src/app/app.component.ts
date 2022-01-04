@@ -4,7 +4,7 @@ import { MatSidenav } from '@angular/material/sidenav';
 import { Remult } from 'remult';
 import { DialogService } from './common/dialog';
 import { InputField, openDialog, RouteHelperService } from '@remult/angular';
-import { Users } from './users/users';
+import { User } from './users/user';
 import { PasswordControl } from "./users/PasswordControl";
 import { InputAreaComponent } from './common/input-area/input-area.component';
 import { AuthService } from './auth.service';
@@ -54,7 +54,7 @@ export class AppComponent implements OnInit {
     this.router.navigate(['/']);
   }
   signUp() {
-    let user = this.remult.repo(Users).create();
+    let user = this.remult.repo(User).create();
     let password = new PasswordControl();
     let confirmPassword = new PasswordControl(terms.confirmPassword);
     openDialog(InputAreaComponent, i => i.args = {
@@ -77,7 +77,7 @@ export class AppComponent implements OnInit {
   }
 
   async updateInfo() {
-    let user = await this.remult.repo(Users).findId(this.remult.user.id);
+    let user = await this.remult.repo(User).findId(this.remult.user.id);
     openDialog(InputAreaComponent, i => i.args = {
       title: terms.updateInfo,
       fields: () => [
@@ -89,7 +89,7 @@ export class AppComponent implements OnInit {
     });
   }
   async changePassword() {
-    let user = await this.remult.repo(Users).findId(this.remult.user.id);
+    let user = await this.remult.repo(User).findId(this.remult.user.id);
     let password = new PasswordControl();
     let confirmPassword = new PasswordControl(terms.confirmPassword);
     openDialog(InputAreaComponent, i => i.args = {

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Users } from './users';
+import { User } from './user';
 import { BackendMethod, Remult } from 'remult';
 
 import { DialogService } from '../common/dialog';
@@ -19,7 +19,7 @@ export class UsersComponent implements OnInit {
     return this.remult.isAllowed(Roles.admin);
   }
 
-  users = new GridSettings(this.remult.repo(Users), {
+  users = new GridSettings(this.remult.repo(User), {
     allowDelete: true,
     allowInsert: true,
     allowUpdate: true,
@@ -51,7 +51,7 @@ export class UsersComponent implements OnInit {
   });
   @BackendMethod({ allowed: Roles.admin })
   static async resetPassword(userId: string, remult?: Remult) {
-    let u = await remult!.repo(Users).findId(userId);
+    let u = await remult!.repo(User).findId(userId);
     if (u) {
       u.password = '';
       await u._.save();

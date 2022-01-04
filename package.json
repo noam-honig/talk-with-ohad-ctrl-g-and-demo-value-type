@@ -38,8 +38,7 @@
     "reflect-metadata": "^0.1.12",
     "compression": "^1.7.3",
     "swagger-ui-express": "^4.1.6",
-    "heroku-ssl-redirect": "^0.1.1",
-    "@angular/material": "~13.1.0"
+    "heroku-ssl-redirect": "^0.1.1"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~13.1.2",

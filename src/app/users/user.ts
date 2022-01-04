@@ -1,10 +1,12 @@
-
-import { IdEntity, FieldOptions, BackendMethod, Filter, Entity, Field, Validators, isBackend, Allow } from "remult";
+import { IdEntity, BackendMethod, Entity, Field, Validators, isBackend, Allow } from "remult";
 import { Remult, } from 'remult';
 import { Roles } from './roles';
 import { terms } from "../terms";
+import { UserInfo } from "remult";
+import * as jwt from 'jsonwebtoken';
 
-@Entity<Users>("Users", {
+
+@Entity<User>("Users", {
     allowApiRead: Allow.authenticated,
     allowApiUpdate: Allow.authenticated,
     allowApiDelete: Roles.admin,
@@ -16,14 +18,14 @@ import { terms } from "../terms";
             if (isBackend()) {
                 if (user._.isNew()) {
                     user.createDate = new Date();
-                    if ((await remult.repo(Users).count()) == 0)
+                    if ((await remult.repo(User).count()) == 0)
                         user.admin = true;// If it's the first user, make it an admin
                 }
             }
         }
     }
 )
-export class Users extends IdEntity {
+export class User extends IdEntity {
     @Field({
         validate: [Validators.required, Validators.uniqueOnBackend],
         caption: terms.username
@@ -64,4 +66,31 @@ export class Users extends IdEntity {
         await this.hashAndSetPassword(password);
         await this._.save();
     }
+    @BackendMethod({ allowed: true })
+    static async signIn(user: string, password: string, remult?: Remult) {
+        let result: UserInfo;
+        let u = await remult!.repo(User).findFirst({ name: user });
+        if (u)
+            if (await u.passwordMatches(password)) {
+                result = {
+                    id: u.id,
+                    roles: [],
+                    name: u.name
+                };
+                if (u.admin) {
+                    result.roles.push(Roles.admin);
+                }
+            }
+
+        if (result!) {
+            return (jwt.sign(result, getJwtTokenSignKey()));
+        }
+        throw new Error(terms.invalidSignIn);
+    }
+}
+
+export function getJwtTokenSignKey() {
+    if (process.env['NODE_ENV'] === "production")
+        return process.env['TOKEN_SIGN_KEY']!;
+    return "my secret key";
 }
