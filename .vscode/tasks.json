@@ -1,42 +1,42 @@
 {
-  // For more information, visit: https://go.microsoft.com/fwlink/?LinkId=733558
-  "version": "2.0.0",
-  "tasks": [
-    {
-      "type": "npm",
-      "script": "start",
-      "isBackground": true,
-      "problemMatcher": {
-        "owner": "typescript",
-        "pattern": "$tsc",
-        "background": {
-          "activeOnStart": true,
-          "beginsPattern": {
-            "regexp": "(.*?)"
-          },
-          "endsPattern": {
-            "regexp": "bundle generation complete"
-          }
-        }
-      }
-    },
-    {
-      "type": "npm",
-      "script": "test",
-      "isBackground": true,
-      "problemMatcher": {
-        "owner": "typescript",
-        "pattern": "$tsc",
-        "background": {
-          "activeOnStart": true,
-          "beginsPattern": {
-            "regexp": "(.*?)"
-          },
-          "endsPattern": {
-            "regexp": "bundle generation complete"
-          }
-        }
-      }
-    }
-  ]
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "npm",
+			"script": "dev-ng",
+			"problemMatcher": [
+				"$tsc-watch"
+			],
+			"label": "npm: dev-ng",
+			"detail": "Angular Cli Dev Server",
+			"isBackground": true,
+			"presentation": {
+				"group": "dev"
+			}
+		},
+		{
+			"type": "npm",
+			"script": "dev-node",
+			"problemMatcher": [
+				"$tsc-watch"
+			],
+			"label": "npm: dev-node",
+			"detail": "Node Dev Server",
+			"isBackground": true,
+			"presentation": {
+				"group": "dev"
+			}
+		},
+		{
+			"label": "dev",
+			"dependsOn": [
+				"npm: dev-ng",
+				"npm: dev-node"
+			],
+			"detail":"runs both dev-ng and dev-node",
+			"problemMatcher": [
+			],
+			"isBackground": true
+		}
+	]
 }
