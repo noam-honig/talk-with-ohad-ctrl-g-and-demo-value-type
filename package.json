@@ -8,7 +8,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "dev": "concurrently --prefix \"[{name}]\" --names \"NODE-API-SERVER,ANGULAR-DEV-SERVER\" -c \"bgBlue.bold,bgGreen.bold\" \"npm run dev-node\" \"npm run dev-ng\"",
-    "dev-ng": "ng serve  --proxy-config proxy.conf.json",
+    "dev-ng": "ng serve  --proxy-config proxy.conf.json --open",
     "dev-node": "ts-node-dev --project tsconfig.server.json src/server/"
   },
   "private": true,
