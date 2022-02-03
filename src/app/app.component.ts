@@ -3,12 +3,13 @@ import { Router, Route, ActivatedRoute } from '@angular/router';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Remult } from 'remult';
 import { DialogService } from './common/dialog';
-import { InputField, openDialog, RouteHelperService } from '@remult/angular';
+import { openDialog, RouteHelperService } from '@remult/angular';
 import { User } from './users/user';
 import { PasswordControl } from "./users/PasswordControl";
 import { InputAreaComponent } from './common/input-area/input-area.component';
 import { AuthService } from './auth.service';
 import { terms } from './terms';
+import { InputField } from '@remult/angular/interfaces';
 
 @Component({
   selector: 'app-root',

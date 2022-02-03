@@ -1,4 +1,4 @@
-import { InputField } from "@remult/angular";
+import { InputField } from "@remult/angular/interfaces";
 import { InputTypes } from "remult/inputTypes";
 import { terms } from "../terms";
 

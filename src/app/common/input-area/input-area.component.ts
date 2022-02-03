@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { DataAreaFieldsSetting, DataAreaSettings, IDataAreaSettings } from '@remult/angular';
+import { DataAreaFieldsSetting, DataAreaSettings, IDataAreaSettings } from '@remult/angular/interfaces';
 import { getFields } from 'remult';
 import { terms } from '../../terms';
 
@@ -26,7 +26,7 @@ export class InputAreaComponent implements OnInit {
     validate?: () => Promise<void>,
     buttons?: button[]
   };
-  terms=terms;
+  terms = terms;
   constructor(
     public dialogRef: MatDialogRef<any>,
     private dialog: DialogService
