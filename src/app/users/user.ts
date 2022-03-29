@@ -1,4 +1,4 @@
-import { IdEntity, BackendMethod, Entity, Field, Validators, isBackend, Allow } from "remult";
+import { IdEntity, BackendMethod, Entity,  Validators, isBackend, Allow, Fields } from "remult";
 import { Remult, } from 'remult';
 import { Roles } from './roles';
 import { terms } from "../terms";
@@ -26,23 +26,23 @@ import * as jwt from 'jsonwebtoken';
     }
 )
 export class User extends IdEntity {
-    @Field({
+    @Fields.string({
         validate: [Validators.required, Validators.uniqueOnBackend],
         caption: terms.username
     })
-    name: string = '';
-    @Field({ includeInApi: false })
-    password: string = '';
-    @Field({
+    name = '';
+    @Fields.string({ includeInApi: false })
+    password = '';
+    @Fields.date({
         allowApiUpdate: false
     })
-    createDate: Date = new Date();
+    createDate = new Date();
 
-    @Field({
+    @Fields.boolean({
         allowApiUpdate: Roles.admin,
         caption: terms.admin
     })
-    admin: Boolean = false;
+    admin = false;
     constructor(private remult: Remult) {
         super();
     }
