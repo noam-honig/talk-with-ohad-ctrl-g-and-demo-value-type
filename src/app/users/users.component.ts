@@ -5,6 +5,7 @@ import { BackendMethod, Remult } from 'remult';
 import { DialogService } from '../common/dialog';
 import { Roles } from './roles';
 import { GridSettings } from '@remult/angular/interfaces';
+import { terms } from '../terms';
 
 
 @Component({
@@ -31,16 +32,14 @@ export class UsersComponent implements OnInit {
     columnSettings: users => [
       users.name,
       users.admin
-
-
     ],
     rowButtons: [{
-      name: 'Reset Password',
+      name: terms.resetPassword,
       click: async () => {
 
-        if (await this.dialog.yesNoQuestion("Are you sure you want to delete the password of " + this.users.currentRow.name)) {
-          await UsersComponent.resetPassword(this.users.currentRow.id);
-          this.dialog.info("Password deleted");
+        if (await this.dialog.yesNoQuestion(terms.passwordDeleteConfirmOf + " " + this.users.currentRow.name)) {
+          await this.users.currentRow.resetPassword();
+          this.dialog.info(terms.passwordDeletedSuccessful);
         };
       }
     }
@@ -49,16 +48,6 @@ export class UsersComponent implements OnInit {
       return await this.dialog.confirmDelete(h.name)
     },
   });
-  @BackendMethod({ allowed: Roles.admin })
-  static async resetPassword(userId: string, remult?: Remult) {
-    let u = await remult!.repo(User).findId(userId);
-    if (u) {
-      u.password = '';
-      await u._.save();
-    }
-  }
-
-
 
   ngOnInit() {
   }

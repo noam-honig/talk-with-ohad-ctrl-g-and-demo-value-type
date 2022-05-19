@@ -18,5 +18,9 @@ export const terms = {
     home: 'Home',
     userAccounts: 'User Accounts',
     invalidSignIn: "Invalid Sign In Info",
-    signOut:'Sign Out'
+    signOut: 'Sign Out',
+    resetPassword: 'Reset Password',
+    passwordDeletedSuccessful: "Password Deleted",
+    passwordDeleteConfirmOf: "Are you sure you want to delete the password of",
+    rememberOnThisDevice: "Remember on this device?"
 }

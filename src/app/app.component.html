@@ -6,7 +6,6 @@
     <span class="toolbar-title">{{currentTitle()}}</span>
     <ng-container *ngIf="!remult.authenticated()">
       <button mat-flat-button color="primary" (click)="signIn()">{{terms.signIn}}</button>
-      <button mat-flat-button color="primary" (click)="signUp()">{{terms.signUp}}</button>
     </ng-container>
     <ng-container *ngIf="remult.authenticated()">
       <button mat-flat-button color="primary" [matMenuTriggerFor]="menu">{{remult.user.name}}</button>

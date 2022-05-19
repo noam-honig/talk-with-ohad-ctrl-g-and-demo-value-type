@@ -5,11 +5,11 @@ import { Remult } from 'remult';
 import { DialogService } from './common/dialog';
 import { openDialog, RouteHelperService } from '@remult/angular';
 import { User } from './users/user';
-import { PasswordControl } from "./users/PasswordControl";
 import { InputAreaComponent } from './common/input-area/input-area.component';
 import { AuthService } from './auth.service';
 import { terms } from './terms';
-import { InputField } from '@remult/angular/interfaces';
+import { SignInController } from './users/SignInController';
+import { UpdatePasswordController } from './users/UpdatePasswordController';
 
 @Component({
   selector: 'app-root',
@@ -17,8 +17,6 @@ import { InputField } from '@remult/angular/interfaces';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-
-
   constructor(
     public router: Router,
     public activeRoute: ActivatedRoute,
@@ -26,22 +24,16 @@ export class AppComponent implements OnInit {
     public dialogService: DialogService,
     public remult: Remult,
     public auth: AuthService) {
-
-
   }
   terms = terms;
 
   async signIn() {
-    let user = new InputField<string>({ caption: terms.username });
-    let password = new PasswordControl();
+    const signIn = new SignInController(this.remult);
     openDialog(InputAreaComponent, i => i.args = {
       title: terms.signIn,
-      fields: () => [
-        user,
-        password
-      ],
+      object: signIn,
       ok: async () => {
-        this.auth.signIn(user.value, password.value);
+        this.auth.setAuthToken(await signIn.signIn(), signIn.rememberOnThisDevice);
       }
     });
   }
@@ -51,30 +43,8 @@ export class AppComponent implements OnInit {
   }
 
   signOut() {
-    this.auth.signOut();
+    this.auth.setAuthToken(null);
     this.router.navigate(['/']);
-  }
-  signUp() {
-    let user = this.remult.repo(User).create();
-    let password = new PasswordControl();
-    let confirmPassword = new PasswordControl(terms.confirmPassword);
-    openDialog(InputAreaComponent, i => i.args = {
-      title: terms.signUp,
-      fields: () => [
-        user.$.name,
-        password,
-        confirmPassword
-      ],
-      ok: async () => {
-        if (password.value != confirmPassword.value) {
-          confirmPassword.error = terms.doesNotMatchPassword;
-          throw new Error(confirmPassword.metadata.caption + " " + confirmPassword.error);
-        }
-        await user.create(password.value);
-        this.auth.signIn(user.name, password.value);
-
-      }
-    });
   }
 
   async updateInfo() {
@@ -90,22 +60,12 @@ export class AppComponent implements OnInit {
     });
   }
   async changePassword() {
-    let user = await this.remult.repo(User).findId(this.remult.user.id);
-    let password = new PasswordControl();
-    let confirmPassword = new PasswordControl(terms.confirmPassword);
+    const updatePassword = new UpdatePasswordController(this.remult);
     openDialog(InputAreaComponent, i => i.args = {
-      title: terms.changePassword,
-      fields: () => [
-        password,
-        confirmPassword
-      ],
+      title: terms.signIn,
+      object: updatePassword,
       ok: async () => {
-        if (password.value != confirmPassword.value) {
-          confirmPassword.error = terms.doesNotMatchPassword;
-          throw new Error(confirmPassword.metadata.caption + " " + confirmPassword.error);
-        }
-        await user.updatePassword(password.value);
-        await user._.save();
+        await updatePassword.updatePassword();
       }
     });
 
@@ -140,8 +100,5 @@ export class AppComponent implements OnInit {
   routeClicked() {
     if (this.dialogService.isScreenSmall())
       this.sidenav.close();
-
   }
-
-
 }
