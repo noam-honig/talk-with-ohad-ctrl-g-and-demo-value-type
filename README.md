@@ -4,10 +4,8 @@ This project is a starter project for using remult & angular that already has a 
 
 To use in a new project:
 ```sh
-md angular-starter-project
-cd angular-starter-project
-git init
-git pull https://github.com/noam-honig/angular-starter-project.git
+npx degit noam-honig/angular-starter-project.git my-project
+cd my-project
 npm i
 ```
 
