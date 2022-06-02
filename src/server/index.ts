@@ -1,5 +1,6 @@
 import express from 'express';
 import { config } from 'dotenv';
+config(); //loads the configuration from the .env file
 import sslRedirect from 'heroku-ssl-redirect'
 import swaggerUi from 'swagger-ui-express';
 import helmet from 'helmet';
@@ -10,7 +11,6 @@ import { getJwtSecret } from '../app/users/SignInController';
 
 
 async function startup() {
-    config(); //loads the configuration from the .env file
     const app = express();
     app.use(sslRedirect());
     app.use(expressjwt({ secret: getJwtSecret(), credentialsRequired: false, algorithms: ['HS256'] }));
