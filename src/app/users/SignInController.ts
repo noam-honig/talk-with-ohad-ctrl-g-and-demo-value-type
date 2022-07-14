@@ -36,20 +36,21 @@ export class SignInController extends ControllerBase {
                 })
             }
         }
-        if (u)
+        if (u) {
             if (!u.password) { // if the user has no password defined, the first password they use is their password
                 u.hashAndSetPassword(this.password);
                 await u.save();
             }
 
-        if (await u.passwordMatches(this.password)) {
-            result = {
-                id: u.id,
-                roles: [],
-                name: u.name
-            };
-            if (u.admin) {
-                result.roles.push(Roles.admin);
+            if (await u.passwordMatches(this.password)) {
+                result = {
+                    id: u.id,
+                    roles: [],
+                    name: u.name
+                };
+                if (u.admin) {
+                    result.roles.push(Roles.admin);
+                }
             }
         }
 
