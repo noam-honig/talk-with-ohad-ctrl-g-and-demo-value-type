@@ -1,6 +1,4 @@
 import express from 'express';
-import { config } from 'dotenv';
-config(); //loads the configuration from the .env file
 import sslRedirect from 'heroku-ssl-redirect'
 import swaggerUi from 'swagger-ui-express';
 import helmet from 'helmet';
