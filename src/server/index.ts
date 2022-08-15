@@ -25,6 +25,11 @@ async function startup() {
 
     app.use(express.static('dist/angular-starter-project'));
     app.use('/*', async (req, res) => {
+        if (req.headers.accept?.includes("json")) {
+            console.log(req);
+            res.status(404).json("missing route: " + req.originalUrl);
+            return;
+        }
         try {
             res.sendFile(process.cwd() + '/dist/angular-starter-project/index.html');
         } catch (err) {
