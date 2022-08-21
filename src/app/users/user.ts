@@ -40,7 +40,6 @@ export class User extends IdEntity {
 
     async hashAndSetPassword(password: string) {
         this.password = (await import('password-hash')).generate(password);
-        this.save();
     }
     async passwordMatches(password: string) {
         return !this.password || (await import('password-hash')).verify(password, this.password);
