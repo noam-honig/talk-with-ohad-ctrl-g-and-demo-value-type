@@ -49,7 +49,7 @@ export class SignInController extends ControllerBase {
                     name: u.name
                 };
                 if (u.admin) {
-                    result.roles.push(Roles.admin);
+                    result.roles!.push(Roles.admin);
                 }
             }
         }

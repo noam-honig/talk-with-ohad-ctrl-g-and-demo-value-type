@@ -48,7 +48,7 @@ export class AppComponent implements OnInit {
   }
 
   async updateInfo() {
-    let user = await this.remult.repo(User).findId(this.remult.user.id);
+    let user = await this.remult.repo(User).findId(this.remult.user!.id);
     openDialog(InputAreaComponent, i => i.args = {
       title: terms.updateInfo,
       fields: () => [

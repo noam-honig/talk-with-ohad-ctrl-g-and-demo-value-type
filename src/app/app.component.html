@@ -8,7 +8,7 @@
       <button mat-flat-button color="primary" (click)="signIn()">{{terms.signIn}}</button>
     </ng-container>
     <ng-container *ngIf="remult.authenticated()">
-      <button mat-flat-button color="primary" [matMenuTriggerFor]="menu">{{remult.user.name}}</button>
+      <button mat-flat-button color="primary" [matMenuTriggerFor]="menu">{{remult.user!.name}}</button>
       <mat-menu #menu="matMenu">
         <button mat-menu-item (click)="updateInfo()">{{terms.updateInfo}}</button>
         <button mat-menu-item (click)="changePassword()">{{terms.changePassword}}</button>
@@ -22,7 +22,7 @@
       <div style="width:100%;text-align: center">
 
       </div>
-      <h4 *ngIf="remult.authenticated()">{{terms.hello}} {{remult.user.name}}</h4>
+      <h4 *ngIf="remult.authenticated()">{{terms.hello}} {{remult.user!.name}}</h4>
       <mat-nav-list role="list">
         <ng-container *ngFor="let m of router.config">
           <mat-list-item *ngIf="shouldDisplayRoute(m)" routerLinkActive="active-route">

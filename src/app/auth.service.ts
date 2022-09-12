@@ -15,7 +15,7 @@ export class AuthService {
 
     setAuthToken(token: string | null, rememberOnThisDevice = false) {
         if (token) {
-            this.remult.setUser(new JwtHelperService().decodeToken(token));
+            this.remult.user = new JwtHelperService().decodeToken(token);
             sessionStorage.setItem(AUTH_TOKEN_KEY, token);
             if (rememberOnThisDevice) {
                 localStorage.setItem(AUTH_TOKEN_KEY, token);
@@ -23,7 +23,7 @@ export class AuthService {
 
         }
         else {
-            this.remult.setUser(undefined!);
+            this.remult.user = undefined;
             sessionStorage.removeItem(AUTH_TOKEN_KEY);
             localStorage.removeItem(AUTH_TOKEN_KEY);
         }

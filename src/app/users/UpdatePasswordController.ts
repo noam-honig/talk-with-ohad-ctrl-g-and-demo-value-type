@@ -22,7 +22,7 @@ export class UpdatePasswordController extends ControllerBase {
 
     @BackendMethod({ allowed: Allow.authenticated })
     async updatePassword() {
-        const user = await this.remult.repo(User).findId(this.remult.user.id);
+        const user = await this.remult.repo(User).findId(this.remult.user!.id);
         await user.hashAndSetPassword(this.password);
         await user.save();
     }

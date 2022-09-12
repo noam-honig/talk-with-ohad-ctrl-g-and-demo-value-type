@@ -32,7 +32,7 @@
     "password-hash": "^1.2.2",
     "pg": "^8.7.3",
     "reflect-metadata": "^0.1.12",
-    "remult": "^0.15.4",
+    "remult": "^0.16.2",
     "rxjs": "~7.5.0",
     "swagger-ui-express": "^4.1.6",
     "tslib": "^2.3.0",

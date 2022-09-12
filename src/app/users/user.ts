@@ -9,7 +9,7 @@ import { terms } from "../terms";
     allowApiInsert: Roles.admin
 },
     (options, remult) => {
-        options.apiPrefilter = !remult.isAllowed(Roles.admin) ? { id: remult.user.id } : {};
+        options.apiPrefilter = !remult.isAllowed(Roles.admin) ? { id: [remult.user?.id!] } : {};
         options.saving = async (user) => {
             if (isBackend()) {
                 if (user._.isNew()) {
