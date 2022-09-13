@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { User } from './user';
-import { BackendMethod, Remult } from 'remult';
 
 import { DialogService } from '../common/dialog';
 import { Roles } from './roles';
 
 import { terms } from '../terms';
 import { GridSettings } from 'common-ui-elements/interfaces';
+import { remult } from 'remult';
 
 
 
@@ -16,13 +16,13 @@ import { GridSettings } from 'common-ui-elements/interfaces';
   styleUrls: ['./users.component.css']
 })
 export class UsersComponent implements OnInit {
-  constructor(private dialog: DialogService, public remult: Remult) {
+  constructor(private dialog: DialogService) {
   }
   isAdmin() {
-    return this.remult.isAllowed(Roles.admin);
+    return remult.isAllowed(Roles.admin);
   }
 
-  users = new GridSettings(this.remult.repo(User), {
+  users = new GridSettings(remult.repo(User), {
     allowDelete: true,
     allowInsert: true,
     allowUpdate: true,

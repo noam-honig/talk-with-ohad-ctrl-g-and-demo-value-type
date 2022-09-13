@@ -7,7 +7,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DataFilterInfoComponent } from './data-filter-info/data-filter-info.component';
 import { DataGrid2Component } from './date-grid-2/data-grid2.component';
 
-import { Remult, FieldMetadata, ValueListItem } from 'remult';
+import { Remult, FieldMetadata, ValueListItem, remult } from 'remult';
 import { actionInfo } from 'remult/src/server-action';
 
 import { NotAuthenticatedGuard, AuthenticatedGuard, RouteHelperService } from './navigate-to-component-route-service';
@@ -50,8 +50,7 @@ import { CommonUIElementsPluginsService } from './CommonUIElementsPluginsService
     MatInputModule, MatIconModule, ReactiveFormsModule, MatCheckboxModule, MatMenuModule, BidiModule],
   providers: [{
     provide: Remult,
-    useFactory: buildContext,
-    deps: [HttpClient, MatDialog]
+    useFactory: () => remult
   },
     NotAuthenticatedGuard, AuthenticatedGuard, RouteHelperService,
     BusyService, CommonUIElementsPluginsService,
@@ -61,7 +60,16 @@ import { CommonUIElementsPluginsService } from './CommonUIElementsPluginsService
   exports: [DataControl2Component, DataFilterInfoComponent, DataGrid2Component, DataArea2Component, SelectValueDialogComponent],
   entryComponents: [WaitComponent, SelectValueDialogComponent, FilterDialogComponent]
 })
-export class CommonUIElementsModule { }
+export class CommonUIElementsModule {
+  constructor(http: HttpClient, dialog: MatDialog) {
+    remult.apiClient.httpClient = http
+    _matDialog = dialog;
+    actionInfo.runActionWithoutBlockingUI = async x => await BusyService.singleInstance.donotWait(x);
+    actionInfo.startBusyWithProgress = () => BusyService.singleInstance.startBusyWithProgress()
+  }
+
+
+}
 export function DialogConfig(config: MatDialogConfig) {
   return function (target: any) {
     target[dialogConfigMember] = config;
@@ -70,16 +78,7 @@ export function DialogConfig(config: MatDialogConfig) {
 }
 const dialogConfigMember = Symbol("dialogConfigMember");
 var _matDialog: MatDialog;
-export function buildContext(http: HttpClient, _dialog: MatDialog) {
-  let r = new Remult(http);
-  _matDialog = _dialog;
 
-
-  actionInfo.runActionWithoutBlockingUI = async x => await BusyService.singleInstance.donotWait(x);
-  actionInfo.startBusyWithProgress = () => BusyService.singleInstance.startBusyWithProgress()
-
-  return r;
-}
 
 
 export async function openDialog<T, C>(component: { new(...args: any[]): C; }, setParameters?: (it: C) => void, returnAValue?: (it: C) => T): Promise<T> {

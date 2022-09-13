@@ -1,5 +1,5 @@
 
-import { FieldMetadata, FieldRef, EntityMetadata, getEntityRef, IdEntity, ValueListItem, EntityRef, Allowed, FieldOptions, Remult, ValueConverter, Unobserve, Repository, EntityOrderBy, EntityFilter, ValueListInfo } from "remult";
+import { FieldMetadata, FieldRef, EntityMetadata, getEntityRef, IdEntity, ValueListItem, EntityRef, Allowed, FieldOptions, ValueConverter, Unobserve, Repository, EntityOrderBy, EntityFilter, ValueListInfo, Remult, remult } from "remult";
 
 import { DataControlInfo, DataControlSettings, decorateDataSettings, getFieldDefinition, ValueOrEntityExpression } from "./data-control-interfaces";
 import { FilterHelper } from "./filter-helper";
@@ -73,7 +73,7 @@ export class FieldCollection<rowType = any> {
   }
   private settingsByKey: any = {};
 
-  allowDesignMode: boolean=false;
+  allowDesignMode: boolean = false;
   async add(...columns: DataControlInfo<rowType>[]): Promise<void>;
   async add(...columns: string[]): Promise<void>;
   async add(...columns: any[]) {
@@ -110,7 +110,7 @@ export class FieldCollection<rowType = any> {
     return Promise.resolve();
   }
   private doWhenWeHaveContext: ((c: Remult) => Promise<any>)[] = [];
-  private remult!: Remult;
+  private remult = remult;
   setContext(remult: Remult) {
     this.remult = remult;
     for (const what of this.doWhenWeHaveContext) {

@@ -35,7 +35,7 @@ export class DataFilterInfoComponent {
 
 
     }
-    constructor(private remult: Remult, dir: Directionality) {
+    constructor( dir: Directionality) {
         this.rightToLeft = dir.value === 'rtl';
     }
 

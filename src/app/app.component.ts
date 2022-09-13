@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router, Route, ActivatedRoute } from '@angular/router';
 import { MatSidenav } from '@angular/material/sidenav';
-import { Remult } from 'remult';
+
 import { DialogService } from './common/dialog';
 import { openDialog, RouteHelperService } from 'common-ui-elements';
 import { User } from './users/user';
@@ -10,6 +10,7 @@ import { AuthService } from './auth.service';
 import { terms } from './terms';
 import { SignInController } from './users/SignInController';
 import { UpdatePasswordController } from './users/UpdatePasswordController';
+import { remult } from 'remult';
 
 @Component({
   selector: 'app-root',
@@ -22,13 +23,13 @@ export class AppComponent implements OnInit {
     public activeRoute: ActivatedRoute,
     private routeHelper: RouteHelperService,
     public dialogService: DialogService,
-    public remult: Remult,
     public auth: AuthService) {
   }
   terms = terms;
+  remult = remult;
 
   async signIn() {
-    const signIn = new SignInController(this.remult);
+    const signIn = new SignInController();
     openDialog(InputAreaComponent, i => i.args = {
       title: terms.signIn,
       object: signIn,
@@ -48,7 +49,7 @@ export class AppComponent implements OnInit {
   }
 
   async updateInfo() {
-    let user = await this.remult.repo(User).findId(this.remult.user!.id);
+    let user = await remult.repo(User).findId(remult.user!.id);
     openDialog(InputAreaComponent, i => i.args = {
       title: terms.updateInfo,
       fields: () => [
@@ -60,7 +61,7 @@ export class AppComponent implements OnInit {
     });
   }
   async changePassword() {
-    const updatePassword = new UpdatePasswordController(this.remult);
+    const updatePassword = new UpdatePasswordController();
     openDialog(InputAreaComponent, i => i.args = {
       title: terms.signIn,
       object: updatePassword,
