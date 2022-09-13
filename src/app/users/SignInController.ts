@@ -1,4 +1,4 @@
-import { BackendMethod, Controller, ControllerBase, Fields, UserInfo, Validators } from "remult";
+import { BackendMethod, Controller, ControllerBase, Fields, remult, UserInfo, Validators } from "remult";
 import { terms } from "../terms";
 import { Roles } from "./roles";
 import { User } from "./user";
@@ -26,7 +26,7 @@ export class SignInController extends ControllerBase {
     @BackendMethod({ allowed: true })
     async signIn() {
         let result: UserInfo;
-        const userRepo = this.remult.repo(User);
+        const userRepo = remult.repo(User);
         let u = await userRepo.findFirst({ name: this.user });
         if (!u) {
             if (await userRepo.count() === 0) { //first ever user is the admin

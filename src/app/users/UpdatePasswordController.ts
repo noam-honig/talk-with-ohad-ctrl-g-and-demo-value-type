@@ -1,4 +1,4 @@
-import { Allow, BackendMethod, Controller, ControllerBase, Fields, Validators } from "remult";
+import { Allow, BackendMethod, Controller, ControllerBase, Fields, remult, Validators } from "remult";
 import { terms } from "../terms";
 import { User } from "./user";
 
@@ -22,7 +22,7 @@ export class UpdatePasswordController extends ControllerBase {
 
     @BackendMethod({ allowed: Allow.authenticated })
     async updatePassword() {
-        const user = await this.remult.repo(User).findId(this.remult.user!.id);
+        const user = await remult.repo(User).findId(remult.user!.id);
         await user.hashAndSetPassword(this.password);
         await user.save();
     }
