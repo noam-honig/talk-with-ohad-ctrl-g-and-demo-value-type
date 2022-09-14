@@ -1,4 +1,4 @@
-import { IdEntity, Entity, Validators, isBackend, Allow, Fields, BackendMethod, Remult } from "remult";
+import { IdEntity, Entity, Validators, isBackend, Allow, Fields, BackendMethod, Remult, remult } from "remult";
 import { Roles } from './roles';
 import { terms } from "../terms";
 
@@ -6,19 +6,16 @@ import { terms } from "../terms";
     allowApiRead: Allow.authenticated,
     allowApiUpdate: Allow.authenticated,
     allowApiDelete: Roles.admin,
-    allowApiInsert: Roles.admin
-},
-    (options, remult) => {
-        options.apiPrefilter = !remult.isAllowed(Roles.admin) ? { id: [remult.user?.id!] } : {};
-        options.saving = async (user) => {
-            if (isBackend()) {
-                if (user._.isNew()) {
-                    user.createDate = new Date();
-                }
+    allowApiInsert: Roles.admin,
+    apiPrefilter: () => !remult.isAllowed(Roles.admin) ? { id: [remult.user?.id!] } : ({}),
+    saving: async (user) => {
+        if (isBackend()) {
+            if (user._.isNew()) {
+                user.createDate = new Date();
             }
         }
     }
-)
+})
 export class User extends IdEntity {
     @Fields.string({
         validate: [Validators.required, Validators.uniqueOnBackend],
