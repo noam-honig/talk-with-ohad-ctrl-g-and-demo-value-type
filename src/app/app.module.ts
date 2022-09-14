@@ -1,6 +1,5 @@
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { FormsModule } from '@angular/forms';
@@ -23,6 +22,8 @@ import { YesNoQuestionComponent } from './common/yes-no-question/yes-no-question
 import { InputAreaComponent } from './common/input-area/input-area.component';
 import { DialogService } from './common/dialog';
 import { AdminGuard } from "./users/AdminGuard";
+import { remult } from 'remult';
+import { SignInController } from './users/SignInController';
 
 @NgModule({
   declarations: [
@@ -50,8 +51,18 @@ import { AdminGuard } from "./users/AdminGuard";
     MatMenuModule,
     CommonUIElementsModule
   ],
-  providers: [DialogService, AdminGuard],
+  providers: [
+    DialogService,
+    AdminGuard,
+    { provide: APP_INITIALIZER, useFactory: initApp, multi: true }],
   bootstrap: [AppComponent],
   entryComponents: [YesNoQuestionComponent, InputAreaComponent]
 })
 export class AppModule { }
+
+export function initApp() {
+  const loadCurrentUserBeforeAppStarts = async () => {
+    remult.user = await SignInController.currentUser();
+  };
+  return loadCurrentUserBeforeAppStarts;
+}

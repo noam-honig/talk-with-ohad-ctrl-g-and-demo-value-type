@@ -1,11 +1,12 @@
-import { BackendMethod, Controller, ControllerBase, Fields, remult, UserInfo, Validators } from "remult";
+import { Allow, BackendMethod, Controller, ControllerBase, Fields, remult, UserInfo, Validators } from "remult";
 import { terms } from "../terms";
 import { Roles } from "./roles";
 import { User } from "./user";
-import jwt from 'jsonwebtoken';
+import { getRequest } from "../../server/getRequest";
 
 @Controller('signIn')
 export class SignInController extends ControllerBase {
+
     @Fields.string({
         caption: terms.username,
         validate: Validators.required
@@ -24,8 +25,13 @@ export class SignInController extends ControllerBase {
     rememberOnThisDevice = false;
 
     @BackendMethod({ allowed: true })
+    /**
+     * This sign mechanism represents a simplistic sign in management utility with the following behaviors
+     * 1. The first user that signs in, is created as a user and is determined as admin.
+     * 2. When a user that has no password signs in, that password that they've signed in with is set as the users password
+     */
     async signIn() {
-        let result: UserInfo;
+        let result: UserInfo | undefined;
         const userRepo = remult.repo(User);
         let u = await userRepo.findFirst({ name: this.user });
         if (!u) {
@@ -54,14 +60,21 @@ export class SignInController extends ControllerBase {
             }
         }
 
-        if (result!) {
-            return (jwt.sign(result, getJwtSecret()));
+        if (result) {
+            const req = getRequest();
+            req.session!['user'] = result;
+            if (this.rememberOnThisDevice)
+                req.sessionOptions.maxAge = 365 * 24 * 60 * 60 * 1000; //remember for a year
+            return result;
         }
         throw new Error(terms.invalidSignIn);
     }
-}
-export function getJwtSecret() {
-    if (process.env['NODE_ENV'] === "production")
-        return process.env['JWT_SECRET']!;
-    return "my secret key";
+    @BackendMethod({ allowed: Allow.authenticated })
+    static signOut() {
+        getRequest().session!['user'] = undefined;
+    }
+    @BackendMethod({ allowed: true })
+    static currentUser() {
+        return remult.user;
+    }
 }

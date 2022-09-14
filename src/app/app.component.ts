@@ -6,7 +6,6 @@ import { DialogService } from './common/dialog';
 import { openDialog, RouteHelperService } from 'common-ui-elements';
 import { User } from './users/user';
 import { InputAreaComponent } from './common/input-area/input-area.component';
-import { AuthService } from './auth.service';
 import { terms } from './terms';
 import { SignInController } from './users/SignInController';
 import { UpdatePasswordController } from './users/UpdatePasswordController';
@@ -22,8 +21,7 @@ export class AppComponent implements OnInit {
     public router: Router,
     public activeRoute: ActivatedRoute,
     private routeHelper: RouteHelperService,
-    public dialogService: DialogService,
-    public auth: AuthService) {
+    public dialogService: DialogService) {
   }
   terms = terms;
   remult = remult;
@@ -34,7 +32,7 @@ export class AppComponent implements OnInit {
       title: terms.signIn,
       object: signIn,
       ok: async () => {
-        this.auth.setAuthToken(await signIn.signIn(), signIn.rememberOnThisDevice);
+        remult.user = await signIn.signIn();
       }
     });
   }
@@ -44,7 +42,8 @@ export class AppComponent implements OnInit {
   }
 
   signOut() {
-    this.auth.setAuthToken(null);
+    SignInController.signOut();
+    remult.user = undefined;
     this.router.navigate(['/']);
   }
 

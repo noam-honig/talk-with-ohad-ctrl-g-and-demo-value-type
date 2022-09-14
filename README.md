@@ -22,7 +22,7 @@ See [Creating a Fullstack Angular Remult app for non web developer](https://gith
 ```sh
 heroku apps:create 
 heroku addons:create heroku-postgresql:hobby-dev
-heroku config:set JWT_SECRET=some-very-secret-key
+heroku config:set SESSION_SECRET=some-very-secret-key
 git push heroku master 
 heroku apps:open
 ```

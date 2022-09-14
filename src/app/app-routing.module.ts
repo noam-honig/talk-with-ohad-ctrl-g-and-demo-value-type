@@ -7,8 +7,6 @@ import { HomeComponent } from './home/home.component';
 import { UsersComponent } from './users/users.component';
 import { AdminGuard } from "./users/AdminGuard";
 import { ShowDialogOnErrorErrorHandler } from './common/dialog';
-import { JwtModule } from '@auth0/angular-jwt';
-import { AuthService } from './auth.service';
 import { terms } from './terms';
 
 const defaultRoute = terms.home;
@@ -21,10 +19,7 @@ const routes: Routes = [
 
 @NgModule({
   imports: [RouterModule.forRoot(routes),
-    CommonUIElementsModule,
-  JwtModule.forRoot({
-    config: { tokenGetter: () => AuthService.fromStorage() }
-  })],
+    CommonUIElementsModule],
   providers: [AdminGuard, { provide: ErrorHandler, useClass: ShowDialogOnErrorErrorHandler }],
   exports: [RouterModule]
 })

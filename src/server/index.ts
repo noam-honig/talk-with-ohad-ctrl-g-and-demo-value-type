@@ -1,30 +1,41 @@
+import { config } from 'dotenv';
+config(); //loads the configuration from the .env file
 import express from 'express';
 import sslRedirect from 'heroku-ssl-redirect'
-import swaggerUi from 'swagger-ui-express';
 import helmet from 'helmet';
-import { expressjwt } from 'express-jwt';
 import compression from 'compression';
 import { api } from './api';
-import { getJwtSecret } from '../app/users/SignInController';
-
+import { getRequestMiddleware } from './getRequestMiddleware';
+import session from "cookie-session";
+import csrf from "csurf";
+import { SignInController } from '../app/users/SignInController';
 
 async function startup() {
     const app = express();
     app.use(sslRedirect());
-    app.use(expressjwt({ secret: getJwtSecret(), credentialsRequired: false, algorithms: ['HS256'] }));
+    app.use(session({
+        secret: process.env["NODE_ENV"] === "production" ? process.env['SESSION_SECRET'] : "my secret"
+    }));
     app.use(compression());
-    app.use(
-        helmet({
-            contentSecurityPolicy: false,
-        })
-    );
-
+    app.use(helmet({ contentSecurityPolicy: false }));
+    app.use('/api', (req, res, next) => {
+        //disable csrf for the `currentUser` backend method that is the first call of the web site.
+        const currentUserMethodName: keyof typeof SignInController = 'currentUser';
+        if (req.path === '/' + currentUserMethodName)
+            csrf({ ignoreMethods: ["post"] })(req, res, next);
+        else
+            csrf({})(req, res, next);
+    });
+    app.use("/api", (req, res, next) => {
+        res.cookie("XSRF-TOKEN", req.csrfToken());
+        next();
+    });
+    app.use(getRequestMiddleware);
     app.use(api);
-    app.use('/api/docs', swaggerUi.serve,
-        swaggerUi.setup(api.openApiDoc({ title: 'remult-react-todo' })));
 
     app.use(express.static('dist/angular-starter-project'));
     app.use('/*', async (req, res) => {
+        req.session
         if (req.headers.accept?.includes("json")) {
             console.log(req);
             res.status(404).json("missing route: " + req.originalUrl);
