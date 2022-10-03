@@ -13,7 +13,7 @@ export class GridSettings<rowType = any>  {
     if (helper.isNew())
       this.restList.removeItem(r);
   }
-  constructor(private repository: Repository<rowType>, public settings?: IDataSettings<rowType>) {
+  constructor(public repository: Repository<rowType>, public settings?: IDataSettings<rowType>) {
     if (!settings)
       this.settings = settings = {};
     this.restList = new DataList<rowType>(repository);

@@ -7,6 +7,8 @@ import { Roles } from './roles';
 import { terms } from '../terms';
 import { GridSettings } from 'common-ui-elements/interfaces';
 import { remult } from 'remult';
+import { saveToExcel } from '../common-ui-elements/interfaces/src/saveGridToExcel';
+import { BusyService } from '../common-ui-elements';
 
 
 
@@ -16,13 +18,13 @@ import { remult } from 'remult';
   styleUrls: ['./users.component.css']
 })
 export class UsersComponent implements OnInit {
-  constructor(private dialog: DialogService) {
+  constructor(private dialog: DialogService, private busyService: BusyService) {
   }
   isAdmin() {
     return remult.isAllowed(Roles.admin);
   }
 
-  users = new GridSettings(remult.repo(User), {
+  users: GridSettings<User> = new GridSettings<User>(remult.repo(User), {
     allowDelete: true,
     allowInsert: true,
     allowUpdate: true,
@@ -35,6 +37,10 @@ export class UsersComponent implements OnInit {
       users.name,
       users.admin
     ],
+    gridButtons: [{
+      name: "Excel",
+      click: () => saveToExcel(this.users, "users", this.busyService)
+    }],
     rowButtons: [{
       name: terms.resetPassword,
       click: async () => {

@@ -22,5 +22,6 @@ export const terms = {
     resetPassword: 'Reset Password',
     passwordDeletedSuccessful: "Password Deleted",
     passwordDeleteConfirmOf: "Are you sure you want to delete the password of",
-    rememberOnThisDevice: "Remember on this device?"
+    rememberOnThisDevice: "Remember on this device?",
+    RTL: false
 }
