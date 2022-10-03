@@ -26,7 +26,7 @@ export class UsersComponent implements OnInit {
     allowDelete: true,
     allowInsert: true,
     allowUpdate: true,
-    numOfColumnsInGrid: 2,
+    columnOrderStateKey: "users",
 
     orderBy: { name: "asc" },
     rowsInPage: 100,

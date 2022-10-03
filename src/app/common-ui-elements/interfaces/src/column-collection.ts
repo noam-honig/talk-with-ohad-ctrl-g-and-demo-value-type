@@ -311,7 +311,7 @@ export class FieldCollection<rowType = any> {
   items: DataControlSettings[] = [];
   private gridColumns!: DataControlSettings[];
   private nonGridColumns!: DataControlSettings[];
-  numOfColumnsInGrid = 5;
+  numOfColumnsInGrid = 50;
 
   private _lastColumnCount!: number;
   private _lastNumOfColumnsInGrid!: number;

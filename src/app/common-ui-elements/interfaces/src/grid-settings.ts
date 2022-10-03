@@ -2,7 +2,7 @@ import { FieldMetadata, Sort, FieldsMetadata, EntityOrderBy, EntityFilter, FindO
 
 import { FieldCollection } from "./column-collection";
 import { DataAreaSettings, IDataAreaSettings } from "./data-area-settings";
-import { DataControlInfo, DataControlSettings } from "./data-control-interfaces";
+import { DataControlInfo, DataControlSettings, getFieldDefinition } from "./data-control-interfaces";
 import { DataList } from "./dataList";
 import { FilterHelper } from "./filter-helper";
 
@@ -350,7 +350,7 @@ export class GridSettings<rowType = any>  {
   }
 
   _currentOrderBy!: Sort;
-  sort(column: FieldMetadata|any) {
+  sort(column: FieldMetadata | any) {
 
     let done = false;
     if (this._currentOrderBy && this._currentOrderBy.Segments.length > 0) {
@@ -363,7 +363,7 @@ export class GridSettings<rowType = any>  {
       this._currentOrderBy = new Sort({ field: column });
     this.reloadData();
   }
-  sortedAscending(column: FieldMetadata|any) {
+  sortedAscending(column: FieldMetadata | any) {
     if (!this._currentOrderBy)
       return false;
     if (!column)
@@ -372,7 +372,7 @@ export class GridSettings<rowType = any>  {
       this._currentOrderBy.Segments[0].field.key == column.key &&
       !this._currentOrderBy.Segments[0].isDescending;
   }
-  sortedDescending(column: FieldMetadata|any) {
+  sortedDescending(column: FieldMetadata | any) {
     if (!this._currentOrderBy)
       return false;
     if (!column)
@@ -388,9 +388,15 @@ export class GridSettings<rowType = any>  {
 
   totalRows!: number;
 
-
+  private _loaded = false;
   async reloadData() {
     let opt: FindOptions<rowType> = await this._internalBuildFindOptions();
+    if (!this._loaded) {
+      this._loaded = true;
+      if (this.settings?.columnOrderStateKey) {
+        new columnOrderAndWidthSaver(this).load(this.settings.columnOrderStateKey);
+      }
+    }
     this.columns.autoGenerateColumnsBasedOnData(this.repository.metadata);
     let result = this.restList.get(opt).then((rows) => {
 
@@ -417,7 +423,7 @@ export class GridSettings<rowType = any>  {
       }
       return this.restList;
     });
-    if (this.settings && this.settings.knowTotalRows) {
+    if (this.settings && !(this.settings.knowTotalRows === false)) {
       this.restList.count(opt.where).then(x => {
         this.totalRows = x;
       });
@@ -470,7 +476,7 @@ export interface IDataSettings<rowType> {
   showPagination?: boolean,
   allowSelection?: boolean,
   confirmDelete?: (r: rowType) => Promise<boolean>;
-
+  columnOrderStateKey?: string;
   columnSettings?: (row: FieldsMetadata<rowType>) => DataControlInfo<rowType>[],
   areas?: { [areaKey: string]: DataControlInfo<rowType>[] },
 
@@ -532,4 +538,75 @@ export interface GridButton {
   textInMenu?: () => string;
   icon?: string;
   cssClass?: (string | (() => string));
+}
+
+
+const storageEntryName = 'grid-state';
+export class columnOrderAndWidthSaver {
+  suspend = false;
+  constructor(private grid: GridSettings<any>) {
+  }
+  getStorage() {
+    let state = localStorage.getItem(storageEntryName);
+    if (state) {
+      let st = JSON.parse(state);
+      if (st)
+        return st;
+    }
+    return {};
+  }
+  load(key: string) {
+    let items: storedColumn[] = this.getStorage()[key];
+    if (items) {
+      let cols = items.map(x => {
+        let r: DataControlSettings | undefined;
+        r = this.grid.columns.items.find(c => c.caption == x.caption);
+        if (!r)
+          r = this.grid.columns.items.find(c => c.field && getFieldDefinition(c.field)?.key == x.key);
+        if (x.width && r)
+          r.width = x.width;
+        return r!;
+      }).filter(x => x !== undefined);
+      if (cols.length > 0)
+        sortColumns(this.grid, cols);
+    }
+    this.grid.columns.onColListChange(() => {
+      if (this.suspend)
+        return;
+      let x: storedColumn[] = [];
+      for (let index = 0; index <= this.grid.columns.numOfColumnsInGrid; index++) {
+        const element = this.grid.columns.items[index];
+        if (element)
+          x.push({ caption: element.caption, key: getFieldDefinition(element.field!)?.key, width: element.width! });
+      }
+      let s = this.getStorage();
+      s[key] = x;
+      localStorage.setItem(storageEntryName, JSON.stringify(s));
+    });
+  }
+}
+export interface storedColumn {
+  key?: string;
+  caption?: string;
+  width: string;
+}
+
+
+export function sortColumns(list: GridSettings<any>, columns: DataControlInfo<any>[]) {
+
+  if (list.origList && list.origList.length > 0)
+    list.resetColumns();
+  list.columns.items.sort((a, b) => a.caption! > b.caption! ? 1 : a.caption! < b.caption! ? -1 : 0);
+  list.columns.numOfColumnsInGrid = columns.length;
+  for (let index = 0; index < columns.length; index++) {
+    const origItem = columns[index];
+    let item: DataControlSettings<any>;
+    let defs = origItem as FieldMetadata<any>;
+    if (defs && defs.valueType) {
+      item = list.columns.items.find(x => x.field == defs)!;
+    }
+    else item = origItem as DataControlSettings<any>;
+    let origIndex = list.columns.items.indexOf(item);
+    list.columns.moveCol(item, -origIndex + index);
+  }
 }
