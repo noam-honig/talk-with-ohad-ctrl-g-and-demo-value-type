@@ -391,13 +391,13 @@ export class GridSettings<rowType = any>  {
   private _loaded = false;
   async reloadData() {
     let opt: FindOptions<rowType> = await this._internalBuildFindOptions();
+    this.columns.autoGenerateColumnsBasedOnData(this.repository.metadata);
     if (!this._loaded) {
       this._loaded = true;
       if (this.settings?.columnOrderStateKey) {
         new columnOrderAndWidthSaver(this).load(this.settings.columnOrderStateKey);
       }
     }
-    this.columns.autoGenerateColumnsBasedOnData(this.repository.metadata);
     let result = this.restList.get(opt).then((rows) => {
 
       this.selectedRows = this.selectedRows.map(s => {
