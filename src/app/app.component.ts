@@ -2,10 +2,10 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router, Route, ActivatedRoute } from '@angular/router';
 import { MatSidenav } from '@angular/material/sidenav';
 
-import { DialogService } from './common/dialog';
+import { UIToolsService } from './common/UIToolsService';
 import { openDialog, RouteHelperService } from 'common-ui-elements';
 import { User } from './users/user';
-import { InputAreaComponent } from './common/input-area/input-area.component';
+import { DataAreaDialogComponent } from './common/data-area-dialog/data-area-dialog.component';
 import { terms } from './terms';
 import { SignInController } from './users/SignInController';
 import { UpdatePasswordController } from './users/UpdatePasswordController';
@@ -21,14 +21,14 @@ export class AppComponent implements OnInit {
     public router: Router,
     public activeRoute: ActivatedRoute,
     private routeHelper: RouteHelperService,
-    public dialogService: DialogService) {
+    public uiService: UIToolsService) {
   }
   terms = terms;
   remult = remult;
 
   async signIn() {
     const signIn = new SignInController();
-    openDialog(InputAreaComponent, i => i.args = {
+    openDialog(DataAreaDialogComponent, i => i.args = {
       title: terms.signIn,
       object: signIn,
       ok: async () => {
@@ -49,7 +49,7 @@ export class AppComponent implements OnInit {
 
   async updateInfo() {
     let user = await remult.repo(User).findId(remult.user!.id);
-    openDialog(InputAreaComponent, i => i.args = {
+    openDialog(DataAreaDialogComponent, i => i.args = {
       title: terms.updateInfo,
       fields: () => [
         user.$.name
@@ -61,7 +61,7 @@ export class AppComponent implements OnInit {
   }
   async changePassword() {
     const updatePassword = new UpdatePasswordController();
-    openDialog(InputAreaComponent, i => i.args = {
+    openDialog(DataAreaDialogComponent, i => i.args = {
       title: terms.signIn,
       object: updatePassword,
       ok: async () => {
@@ -98,7 +98,7 @@ export class AppComponent implements OnInit {
   //@ts-ignore ignoring this to match angular 7 and 8
   @ViewChild('sidenav') sidenav: MatSidenav;
   routeClicked() {
-    if (this.dialogService.isScreenSmall())
+    if (this.uiService.isScreenSmall())
       this.sidenav.close();
   }
 }

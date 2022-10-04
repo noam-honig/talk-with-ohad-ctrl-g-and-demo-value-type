@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { User } from './user';
 
-import { DialogService } from '../common/dialog';
+import { UIToolsService } from '../common/UIToolsService';
 import { Roles } from './roles';
 
 import { terms } from '../terms';
@@ -18,7 +18,7 @@ import { BusyService } from '../common-ui-elements';
   styleUrls: ['./users.component.css']
 })
 export class UsersComponent implements OnInit {
-  constructor(private dialog: DialogService, private busyService: BusyService) {
+  constructor(private ui: UIToolsService, private busyService: BusyService) {
   }
   isAdmin() {
     return remult.isAllowed(Roles.admin);
@@ -45,15 +45,15 @@ export class UsersComponent implements OnInit {
       name: terms.resetPassword,
       click: async () => {
 
-        if (await this.dialog.yesNoQuestion(terms.passwordDeleteConfirmOf + " " + this.users.currentRow.name)) {
+        if (await this.ui.yesNoQuestion(terms.passwordDeleteConfirmOf + " " + this.users.currentRow.name)) {
           await this.users.currentRow.resetPassword();
-          this.dialog.info(terms.passwordDeletedSuccessful);
+          this.ui.info(terms.passwordDeletedSuccessful);
         };
       }
     }
     ],
     confirmDelete: async (h) => {
-      return await this.dialog.confirmDelete(h.name)
+      return await this.ui.confirmDelete(h.name)
     },
   });
 

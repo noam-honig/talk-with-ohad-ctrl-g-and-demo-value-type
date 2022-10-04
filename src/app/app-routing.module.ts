@@ -6,7 +6,7 @@ import { HomeComponent } from './home/home.component';
 
 import { UsersComponent } from './users/users.component';
 import { AdminGuard } from "./users/AdminGuard";
-import { ShowDialogOnErrorErrorHandler } from './common/dialog';
+import { ShowDialogOnErrorErrorHandler } from './common/UIToolsService';
 import { terms } from './terms';
 
 const defaultRoute = terms.home;

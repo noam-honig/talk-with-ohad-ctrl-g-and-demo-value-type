@@ -19,11 +19,12 @@ import { CommonUIElementsModule } from 'common-ui-elements';
 import { UsersComponent } from './users/users.component';
 import { HomeComponent } from './home/home.component';
 import { YesNoQuestionComponent } from './common/yes-no-question/yes-no-question.component';
-import { InputAreaComponent } from './common/input-area/input-area.component';
-import { DialogService } from './common/dialog';
+import { DataAreaDialogComponent } from './common/data-area-dialog/data-area-dialog.component';
+import { UIToolsService } from './common/UIToolsService';
 import { AdminGuard } from "./users/AdminGuard";
 import { remult } from 'remult';
 import { SignInController } from './users/SignInController';
+import { TextAreaDataControlComponent } from './common/textarea-data-control/textarea-data-control.component';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,8 @@ import { SignInController } from './users/SignInController';
     UsersComponent,
     HomeComponent,
     YesNoQuestionComponent,
-    InputAreaComponent
+    DataAreaDialogComponent,
+    TextAreaDataControlComponent
   ],
   imports: [
     BrowserModule,
@@ -52,11 +54,11 @@ import { SignInController } from './users/SignInController';
     CommonUIElementsModule
   ],
   providers: [
-    DialogService,
+    UIToolsService,
     AdminGuard,
     { provide: APP_INITIALIZER, useFactory: initApp, multi: true }],
   bootstrap: [AppComponent],
-  entryComponents: [YesNoQuestionComponent, InputAreaComponent]
+  entryComponents: [YesNoQuestionComponent, DataAreaDialogComponent]
 })
 export class AppModule { }
 

@@ -3,16 +3,20 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { Remult } from "remult";
 
 import { YesNoQuestionComponent } from "./yes-no-question/yes-no-question.component";
-import { openDialog } from "common-ui-elements";
+import { CommonUIElementsPluginsService, openDialog, SelectValueDialogComponent } from "common-ui-elements";
 import { terms } from "../terms";
-
-
-
-
+import { UITools } from "./UITools";
+import { TextAreaDataControlComponent } from "./textarea-data-control/textarea-data-control.component";
 
 
 @Injectable()
-export class DialogService {
+export class UIToolsService implements UITools {
+    constructor(zone: NgZone, private snackBar: MatSnackBar, commonUIPlugin: CommonUIElementsPluginsService) {
+        this.mediaMatcher.addListener(mql => zone.run(() => /*this.mediaMatcher = mql*/"".toString()));
+        this.enhanceFieldOptionsAndDataControlOptions(commonUIPlugin);
+    }
+
+
     info(info: string): any {
         this.snackBar.open(info, "close", { duration: 4000 });
     }
@@ -29,23 +33,37 @@ export class DialogService {
     isScreenSmall() {
         return this.mediaMatcher.matches;
     }
-
-    constructor(private remult: Remult, zone: NgZone, private snackBar: MatSnackBar) {
-        this.mediaMatcher.addListener(mql => zone.run(() => /*this.mediaMatcher = mql*/"".toString()));
-
-
-    }
-
     async yesNoQuestion(question: string) {
         return await openDialog(YesNoQuestionComponent, d => d.args = { message: question }, d => d.okPressed);
     }
     async confirmDelete(of: string) {
         return await this.yesNoQuestion(terms.areYouSureYouWouldLikeToDelete + " " + of + "?");
     }
+    async selectValuesDialog<T extends { caption?: string; }>(args: { values: T[]; onSelect: (selected: T) => void; title?: string; }): Promise<void> {
+        await openDialog(SelectValueDialogComponent, x => x.args(args))
+    }
+    private enhanceFieldOptionsAndDataControlOptions(commonUIPlugin: CommonUIElementsPluginsService) {
+        commonUIPlugin.dataControlAugmenter = (fieldMetadata, options) => {
+            if (fieldMetadata.options.clickWithUI) {
+                if (!options.click) {
+                    options.click = (entity, fieldRef) => fieldMetadata.options.clickWithUI!(this, entity, fieldRef);
+                }
+            }
+            if (fieldMetadata.options.customInput) {
+                fieldMetadata.options.customInput({
+                    textarea() {
+                        options.customComponent = {
+                            component: TextAreaDataControlComponent
+                        }
+                    },
+                });
+            }
+        };
+    }
 }
 @Injectable()
 export class ShowDialogOnErrorErrorHandler extends ErrorHandler {
-    constructor(private dialog: DialogService, private zone: NgZone) {
+    constructor(private ui: UIToolsService, private zone: NgZone) {
         super();
     }
     lastErrorString = '';
@@ -57,7 +75,7 @@ export class ShowDialogOnErrorErrorHandler extends ErrorHandler {
         this.lastErrorString = error.toString();
         this.lastErrorTime = new Date().valueOf();
         this.zone.run(() => {
-            this.dialog.error(error);
+            this.ui.error(error);
         });
 
     }
