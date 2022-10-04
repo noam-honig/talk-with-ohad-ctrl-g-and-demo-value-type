@@ -12,7 +12,7 @@ export class DataAreaDialogComponent implements OnInit {
   args!: {
     title: string,
     helpText?: string,
-    fields?: () => DataAreaFieldsSetting<any>[];
+    fields?:  DataAreaFieldsSetting<any>[];
     areaSettings?: IDataAreaSettings,
     object?: any,
     ok: () => void,
@@ -34,7 +34,7 @@ export class DataAreaDialogComponent implements OnInit {
     if (this.args.areaSettings)
       this.area = new DataAreaSettings(this.args.areaSettings, undefined, undefined);
     else if (this.args.fields) {
-      this.area = new DataAreaSettings({ fields: () => this.args.fields!() });
+      this.area = new DataAreaSettings({ fields: () => this.args.fields! });
     }
     else if (this.args.object) {
       this.area = new DataAreaSettings({ fields: () => [...getFields(this.args.object)] })

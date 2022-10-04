@@ -51,7 +51,7 @@ export class AppComponent implements OnInit {
     let user = await remult.repo(User).findId(remult.user!.id);
     openDialog(DataAreaDialogComponent, i => i.args = {
       title: terms.updateInfo,
-      fields: () => [
+      fields:  [
         user.$.name
       ],
       ok: async () => {
