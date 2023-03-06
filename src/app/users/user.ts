@@ -6,7 +6,7 @@ import { terms } from "../terms";
     allowApiRead: Allow.authenticated,
     allowApiUpdate: Allow.authenticated,
     allowApiDelete: Roles.admin,
-    allowApiInsert: Roles.admin,
+    allowApiInsert: true,
     apiPrefilter: () => !remult.isAllowed(Roles.admin) ? { id: [remult.user?.id!] } : ({}),
     saving: async (user) => {
         if (isBackend()) {

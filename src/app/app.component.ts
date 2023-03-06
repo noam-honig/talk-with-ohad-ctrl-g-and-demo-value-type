@@ -10,36 +10,44 @@ import { terms } from './terms';
 import { SignInController } from './users/SignInController';
 import { UpdatePasswordController } from './users/UpdatePasswordController';
 import { remult } from 'remult';
+import { entities } from '../server/entities';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit {
   constructor(
     public router: Router,
     public activeRoute: ActivatedRoute,
     private routeHelper: RouteHelperService,
-    public uiService: UIToolsService) {
+    public uiService: UIToolsService
+  ) {
+    for (const entity of entities) {
+      this.entities.push(remult.repo(entity as any).metadata.key);
+    }
   }
   terms = terms;
   remult = remult;
+  entities: string[] = [];
 
   async signIn() {
     const signIn = new SignInController();
-    openDialog(DataAreaDialogComponent, i => i.args = {
-      title: terms.signIn,
-      object: signIn,
-      ok: async () => {
-        remult.user = await signIn.signIn();
-      }
-    });
+    openDialog(
+      DataAreaDialogComponent,
+      (i) =>
+        (i.args = {
+          title: terms.signIn,
+          object: signIn,
+          ok: async () => {
+            remult.user = await signIn.signIn();
+          },
+        })
+    );
   }
 
-  ngOnInit(): void {
-
-  }
+  ngOnInit(): void {}
 
   signOut() {
     SignInController.signOut();
@@ -49,32 +57,36 @@ export class AppComponent implements OnInit {
 
   async updateInfo() {
     let user = await remult.repo(User).findId(remult.user!.id);
-    openDialog(DataAreaDialogComponent, i => i.args = {
-      title: terms.updateInfo,
-      fields:  [
-        user.$.name
-      ],
-      ok: async () => {
-        await user._.save();
-      }
-    });
+    openDialog(
+      DataAreaDialogComponent,
+      (i) =>
+        (i.args = {
+          title: terms.updateInfo,
+          fields: [user.$.name],
+          ok: async () => {
+            await user._.save();
+          },
+        })
+    );
   }
   async changePassword() {
     const updatePassword = new UpdatePasswordController();
-    openDialog(DataAreaDialogComponent, i => i.args = {
-      title: terms.signIn,
-      object: updatePassword,
-      ok: async () => {
-        await updatePassword.updatePassword();
-      }
-    });
-
+    openDialog(
+      DataAreaDialogComponent,
+      (i) =>
+        (i.args = {
+          title: terms.signIn,
+          object: updatePassword,
+          ok: async () => {
+            await updatePassword.updatePassword();
+          },
+        })
+    );
   }
 
   routeName(route: Route) {
     let name = route.path;
-    if (route.data && route.data['name'])
-      name = route.data['name'];
+    if (route.data && route.data['name']) name = route.data['name'];
     return name;
   }
 
@@ -82,8 +94,7 @@ export class AppComponent implements OnInit {
     if (this.activeRoute!.snapshot && this.activeRoute!.firstChild)
       if (this.activeRoute.snapshot.firstChild!.data!['name']) {
         return this.activeRoute.snapshot.firstChild!.data['name'];
-      }
-      else {
+      } else {
         if (this.activeRoute.firstChild.routeConfig)
           return this.activeRoute.firstChild.routeConfig.path;
       }
@@ -91,14 +102,19 @@ export class AppComponent implements OnInit {
   }
 
   shouldDisplayRoute(route: Route) {
-    if (!(route.path && route.path.indexOf(':') < 0 && route.path.indexOf('**') < 0))
+    if (
+      !(
+        route.path &&
+        route.path.indexOf(':') < 0 &&
+        route.path.indexOf('**') < 0
+      )
+    )
       return false;
     return this.routeHelper.canNavigateToRoute(route);
   }
   //@ts-ignore ignoring this to match angular 7 and 8
   @ViewChild('sidenav') sidenav: MatSidenav;
   routeClicked() {
-    if (this.uiService.isScreenSmall())
-      this.sidenav.close();
+    if (this.uiService.isScreenSmall()) this.sidenav.close();
   }
 }

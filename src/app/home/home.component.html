@@ -1,3 +1,5 @@
-<p>
-  home works!
-</p>
+<ul>
+  <li *ngFor="let p of people">
+    {{ p.name }} {{p.$.gender.displayValue}}
+  </li>
+</ul>

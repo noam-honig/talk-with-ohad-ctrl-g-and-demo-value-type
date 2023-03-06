@@ -31,6 +31,13 @@
 
 
         </ng-container>
+        <ng-container *ngFor="let e of entities">
+          <mat-list-item  routerLinkActive="active-route">
+            <a matLine [routerLink]="'/ctrlg/'+e" (click)="routeClicked()">{{e}}</a>
+          </mat-list-item>
+
+
+        </ng-container>
       </mat-nav-list>
 
     </mat-sidenav>
